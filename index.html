@@ -4,680 +4,485 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema Hotelero Completo</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script>
-        window.addEventListener('error', function(e) {
-            console.error('ERROR GLOBAL:', e.error);
-        });
-        console.log('Script de depuración activo');
-    </script>
+    <meta name="description" content="Angel Gabriel Ibarra - Security Analyst especializado en ciberseguridad y redes">
+    <title>Angel Gabriel Ibarra | Security Analyst</title>
+    
+    <!-- Feather Icons CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js"></script>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <div class="app-container">
-        <!-- Sidebar de Navegación (Desktop/Tablet) -->
-        <aside class="sidebar">
-            <div class="logo">
-                <div class="logo-icon">🏨</div>
-                <div class="logo-text">
-                    <h2>Hotel</h2>
-                    <p>Los Angeles</p>
-                </div>
-            </div>
-            <nav class="nav-menu">
-                <button class="nav-btn" data-section="dashboard">
-                    <i class="fas fa-tachometer-alt"></i>
-                    <span>Dashboard</span>
-                </button>
-                <button class="nav-btn" data-section="mvp">
-                    <i class="fas fa-home"></i>
-                    <span>MVP Principal</span>
-                </button>
-                <button class="nav-btn" data-section="habitaciones">
-                    <i class="fas fa-bed"></i>
-                    <span>Habitaciones <span class="nav-badge" id="roomsBadge">(0)</span></span>
-                </button>
-                <button class="nav-btn" data-section="inventario">
-                    <i class="fas fa-boxes"></i>
-                    <span>Inventario <span class="nav-badge" id="inventoryBadge">(0)</span></span>
-                </button>
-                <button class="nav-btn" data-section="producto-form">
-                    <i class="fas fa-edit"></i>
-                    <span>Editar Producto</span>
-                </button>
-                <button class="nav-btn" data-section="venta-form">
-                    <i class="fas fa-cash-register"></i>
-                    <span>Registrar Venta</span>
-                </button>
-                <button class="nav-btn" data-section="reserva-form">
-                    <i class="fas fa-calendar-check"></i>
-                    <span>Reservar Habitación</span>
-                </button>
-            </nav>
-            <div class="sidebar-footer">
-                <div class="system-info">
-                    <i class="fas fa-circle"></i>
-                    <span>Sistema Activo</span>
-                </div>
-                <div class="total-modules">
-                    <i class="fas fa-cube"></i>
-                    <span>7 Módulos</span>
-                </div>
-            </div>
-        </aside>
-
-        <!-- Bottom Navigation (Móvil) -->
-        <nav class="bottom-nav">
-            <div class="bottom-nav-items">
-                <button class="bottom-nav-btn active" data-section="dashboard">
-                    <i class="fas fa-tachometer-alt"></i>
-                    <span>Inicio</span>
-                </button>
-                <button class="bottom-nav-btn" data-section="venta-form">
-                    <i class="fas fa-cash-register"></i>
-                    <span>Venta</span>
-                </button>
-                <button class="bottom-nav-btn" data-section="reserva-form">
-                    <i class="fas fa-calendar-plus"></i>
-                    <span>Reserva</span>
-                </button>
-                <button class="bottom-nav-btn" data-section="habitaciones">
-                    <i class="fas fa-bed"></i>
-                    <span>Hab.</span>
-                </button>
-                <button class="bottom-nav-btn" data-section="inventario">
-                    <i class="fas fa-boxes"></i>
-                    <span>Inventario</span>
-                </button>
-            </div>
-        </nav>
-
-        <!-- Contenido Principal -->
-        <main class="main-content">
-            <header class="main-header">
-                <div class="header-left">
-                    <div class="hotel-brand">
-                        <span class="brand-icon">🏨</span>
-                        <div class="brand-info">
-                            <h1>Hotel Los Angeles</h1>
-                            <p class="brand-tagline">Sistema de Gestión Hotelera</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="header-center">
-                    <h2 id="section-title" class="section-title">Dashboard</h2>
-                </div>
-                <div class="header-search">
-                    <input type="text" id="globalSearch" placeholder="Buscar producto, reserva..." class="search-input">
-                    <i class="fas fa-search"></i>
-                    <div id="searchResults" class="search-results"></div>
-                </div>
-                <div class="header-right">
-                    <button class="action-btn" id="notifications-btn" title="Notificaciones">
-                        <i class="fas fa-bell"></i>
-                        <span>Notificaciones</span>
-                        <span class="notification-badge" id="notificationBadge" style="display:none;">0</span>
-                    </button>
-                    <button class="action-btn" id="theme-toggle-btn" title="Modo oscuro/claro">
-                        <i class="fas fa-moon"></i>
-                        <span>Tema</span>
-                    </button>
-                    <button class="action-btn" id="refresh-btn" title="Actualizar datos">
-                        <i class="fas fa-sync-alt"></i>
-                        <span>Actualizar</span>
-                    </button>
-                    <button class="action-btn" id="help-btn" title="Ayuda del sistema">
-                        <i class="fas fa-question-circle"></i>
-                        <span>Ayuda</span>
-                    </button>
-                </div>
-                <!-- Panel de notificaciones -->
-                <div id="notificationPanel" class="notification-panel">
-                    <div class="notification-panel-header">
-                        <h3>Notificaciones</h3>
-                        <button onclick="closeNotificationPanel()">&times;</button>
-                    </div>
-                    <div id="notificationList" class="notification-list"></div>
-                </div>
-            </header>
-
-            <!-- Contenedor de todas las secciones -->
-            <div class="sections-container">
-                <!-- Dashboard -->
-                <section id="dashboard" class="content-section active">
-                    <div class="dashboard-header">
-                        <h2><i class="fas fa-tachometer-alt"></i> Dashboard – Hotel</h2>
-                        <div class="dashboard-stats">
-                            <div class="stat-card">
-                                <i class="fas fa-dollar-sign"></i>
-                                <div>
-                                    <h3>Ventas Hoy</h3>
-                                    <p class="stat-value">$0.00</p>
-                                    <small class="stat-change" id="ventasChange">+0% vs ayer</small>
-                                </div>
-                            </div>
-                            <div class="stat-card">
-                                <i class="fas fa-bed"></i>
-                                <div>
-                                    <h3>Habitaciones Ocupadas</h3>
-                                    <p class="stat-value">0/26</p>
-                                    <small class="stat-change" id="occupancyChange">Ocupación normal</small>
-                                </div>
-                            </div>
-                            <div class="stat-card">
-                                <i class="fas fa-box"></i>
-                                <div>
-                                    <h3>Productos Bajo Stock</h3>
-                                    <p class="stat-value">0</p>
-                                    <small class="stat-change" id="stockChange">Todos OK</small>
-                                </div>
-                            </div>
-                            <div class="stat-card">
-                                <i class="fas fa-users"></i>
-                                <div>
-                                    <h3>Reservas Próximas</h3>
-                                    <p class="stat-value">0</p>
-                                    <small class="stat-change">Próximos 7 días</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- BOTONES DE ACCIÓN PRINCIPALES (Solo 3) -->
-                    <div class="actions">
-                        <button class="dashboard-action" onclick="console.log('Click en Registrar venta'); mostrarSeccion('venta-form')">
-                            <i class="fas fa-cash-register"></i>
-                            Registrar venta
-                        </button>
-                        <button class="dashboard-action" onclick="console.log('Click en Agendar habitación'); mostrarSeccion('reserva-form')">
-                            <i class="fas fa-calendar-plus"></i>
-                            Agendar habitación
-                        </button>
-                        <button class="dashboard-action" onclick="console.log('Click en Ver habitaciones'); mostrarSeccion('habitaciones')">
-                            <i class="fas fa-bed"></i>
-                            Ver habitaciones
-                        </button>
-                    </div>
-
-                    <!-- VENTAS DEL DÍA -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h3><i class="fas fa-shopping-cart"></i> Ventas del día</h3>
-                            <button class="small-btn">Ver todas</button>
-                        </div>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Hora</th>
-                                    <th>Producto</th>
-                                    <th>Cantidad</th>
-                                    <th>Total</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tablaVentas">
-                                <tr><td colspan="4" class="loading">Cargando datos...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- HISTORIAL RECIENTE (Acordeón contraído) -->
-                    <div class="card">
-                        <button class="accordion-header" onclick="toggleAccordion(this)">
-                            <h3 style="margin: 0; display: flex; align-items: center; gap: 10px;">
-                                <i class="fas fa-history"></i> Historial reciente
-                            </h3>
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                        <div class="accordion-content">
-                            <div class="history-grid">
-                            <div>
-                                <h4>Reservas recientes</h4>
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th>Fecha</th>
-                                            <th>Hab.</th>
-                                            <th>Cliente</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="recentReservas">
-                                        <tr><td colspan="3" class="loading">Cargando...</td></tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div>
-                                <h4>Movimientos recientes</h4>
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th>Hora</th>
-                                            <th>Descripción</th>
-                                            <th>Monto</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="recentMovimientos">
-                                        <tr><td colspan="3" class="loading">Cargando...</td></tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- ESTADO HABITACIONES -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h3><i class="fas fa-building"></i> Estado de habitaciones</h3>
-                            <button class="small-btn" onclick="mostrarSeccion('habitaciones')">Gestionar</button>
-                        </div>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Habitación</th>
-                                    <th>Estado</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tablaHabitaciones">
-                                <tr><td colspan="2" class="loading">Cargando datos...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- STOCK BAJO -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h3><i class="fas fa-exclamation-triangle"></i> Productos con stock bajo</h3>
-                            <button class="small-btn" onclick="mostrarSeccion('inventario')">Ver todo</button>
-                        </div>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Producto</th>
-                                    <th>Stock</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tablaStock">
-                                <tr><td colspan="2" class="loading">Cargando datos...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </section>
-
-                <!-- MVP Principal -->
-                <section id="mvp" class="content-section">
-                    <div class="mvp-header">
-                        <h2><i class="fas fa-home"></i> Sistema Hotelero – MVP</h2>
-                        <p class="subtitle">Módulo principal de gestión</p>
-                    </div>
-
-                    <div class="mvp-nav">
-                        <button class="mvp-nav-btn active" onclick="mostrarMVPSection('habitaciones-mvp')">
-                            <i class="fas fa-bed"></i> Habitaciones
-                        </button>
-                        <button class="mvp-nav-btn" onclick="mostrarMVPSection('reservas-mvp')">
-                            <i class="fas fa-calendar-alt"></i> Reservas
-                        </button>
-                        <button class="mvp-nav-btn" onclick="mostrarMVPSection('tienda-mvp')">
-                            <i class="fas fa-store"></i> Tienda
-                        </button>
-                        <button class="mvp-nav-btn" onclick="mostrarMVPSection('ventas-mvp')">
-                            <i class="fas fa-cash-register"></i> Ventas
-                        </button>
-                    </div>
-
-                    <!-- HABITACIONES MVP -->
-                    <div id="habitaciones-mvp" class="mvp-section active">
-                        <h3><i class="fas fa-bed"></i> Registrar Habitación</h3>
-                        <form class="mvp-form" id="formHabitacion">
-                            <div class="form-group">
-                                <label for="habNumero">Número de habitación</label>
-                                <input type="number" id="habNumero" min="1" max="26" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="habTipo">Tipo</label>
-                                <select id="habTipo" required>
-                                    <option value="">Seleccione</option>
-                                    <option>Simple</option>
-                                    <option>Doble</option>
-                                    <option>Familiar</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="habPrecio">Precio por noche</label>
-                                <input type="number" id="habPrecio" required>
-                            </div>
-                            <button type="submit" class="submit-btn">
-                                <i class="fas fa-save"></i> Guardar Habitación
-                            </button>
-                            <div class="msg" id="msgHabitacion"></div>
-                        </form>
-                    </div>
-
-                    <!-- RESERVAS MVP -->
-                    <div id="reservas-mvp" class="mvp-section">
-                        <h3><i class="fas fa-calendar-alt"></i> Registrar Reserva</h3>
-                        <form class="mvp-form" id="formReserva">
-                            <div class="form-group">
-                                <label for="resCliente">Cliente</label>
-                                <input type="text" id="resCliente" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="resHabitacion">Habitación</label>
-                                <input type="number" id="resHabitacion" min="1" max="26" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="resEntrada">Fecha entrada</label>
-                                <input type="date" id="resEntrada" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="resSalida">Fecha salida</label>
-                                <input type="date" id="resSalida" required>
-                            </div>
-                            <button type="submit" class="submit-btn">
-                                <i class="fas fa-calendar-check"></i> Registrar Reserva
-                            </button>
-                            <div class="msg" id="msgReserva"></div>
-                        </form>
-                    </div>
-
-                    <!-- TIENDA MVP -->
-                    <div id="tienda-mvp" class="mvp-section">
-                        <h3><i class="fas fa-store"></i> Registrar Producto</h3>
-                        <form class="mvp-form" id="formProducto">
-                            <div class="form-group">
-                                <label for="prodNombre">Nombre del producto</label>
-                                <input type="text" id="prodNombre" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="prodPrecio">Precio</label>
-                                <input type="number" id="prodPrecio" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="prodCantidad">Cantidad en inventario</label>
-                                <input type="number" id="prodCantidad" required>
-                            </div>
-                            <button type="submit" class="submit-btn">
-                                <i class="fas fa-save"></i> Guardar Producto
-                            </button>
-                            <div class="msg" id="msgProducto"></div>
-                        </form>
-                    </div>
-
-                    <!-- VENTAS MVP -->
-                    <div id="ventas-mvp" class="mvp-section">
-                        <h3><i class="fas fa-cash-register"></i> Registrar Venta</h3>
-                        <form class="mvp-form" id="formVenta">
-                            <div class="form-group">
-                                <label for="ventaProducto">Producto</label>
-                                <input type="text" id="ventaProducto" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="ventaCantidad">Cantidad</label>
-                                <input type="number" id="ventaCantidad" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="ventaHabitacion">Habitación (opcional)</label>
-                                <input type="number" id="ventaHabitacion" min="1" max="26">
-                            </div>
-                            <button type="submit" class="submit-btn">
-                                <i class="fas fa-cash-register"></i> Registrar Venta
-                            </button>
-                            <div class="msg" id="msgVenta"></div>
-                        </form>
-                    </div>
-                </section>
-
-                <!-- Habitaciones -->
-                <section id="habitaciones" class="content-section">
-                    <div class="section-header">
-                        <h2><i class="fas fa-bed"></i> Gestión de Habitaciones</h2>
-                        <button class="primary-btn" onclick="mostrarSeccion('reserva-form')">
-                            <i class="fas fa-plus"></i> Nueva Reserva
-                        </button>
-                    </div>
-                    
-                    <div class="card">
-                        <h3><i class="fas fa-building"></i> Estado de habitaciones</h3>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Estado</th>
-                                    <th>Cambiar estado</th>
-                                    <th>Agendar</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tablaHabitacionesFull">
-                                <tr><td colspan="4" class="loading">Cargando habitaciones...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </section>
-
-                <!-- Inventario -->
-                <section id="inventario" class="content-section">
-                    <div class="section-header">
-                        <h2><i class="fas fa-boxes"></i> Inventario - Productos</h2>
-                        <button class="primary-btn" onclick="mostrarSeccion('producto-form')">
-                            <i class="fas fa-plus"></i> Agregar producto
-                        </button>
-                    </div>
-                    
-                    <div class="search-bar">
-                        <input type="text" id="filtroNombre" placeholder="Buscar producto..." onkeyup="filtrarProductos()">
-                        <i class="fas fa-search"></i>
-                    </div>
-                    
-                    <div class="card">
-                        <h3><i class="fas fa-clipboard-list"></i> Lista de productos</h3>
-                        <div class="table-controls">
-                            <label><input type="checkbox" id="sortByPrice"> Ordenar por precio</label>
-                            <label>
-                                <select id="pageSize">
-                                    <option value="5">5 por página</option>
-                                    <option value="10" selected>10 por página</option>
-                                    <option value="20">20 por página</option>
-                                </select>
-                            </label>
-                        </div>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Producto</th>
-                                    <th>Precio</th>
-                                    <th>Stock</th>
-                                    <th>Estado</th>
-                                    <th>Acción</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tablaProductos">
-                                <tr><td colspan="5" class="loading">Cargando productos...</td></tr>
-                            </tbody>
-                        </table>
-                        <div id="productPagination" class="pagination"></div>
-                    </div>
-                </section>
-
-                <!-- Producto Form -->
-                <section id="producto-form" class="content-section">
-                    <div class="section-header">
-                        <h2><i class="fas fa-edit"></i> Producto - Formulario</h2>
-                        <button class="secondary-btn" onclick="mostrarSeccion('inventario')">
-                            <i class="fas fa-arrow-left"></i> Volver al inventario
-                        </button>
-                    </div>
-                    
-                    <div class="card form-card">
-                        <h3><i class="fas fa-box"></i> Registrar / Editar producto</h3>
-                        <form id="productoForm">
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="nombre">Nombre <span class="required">*</span></label>
-                                    <input type="text" id="nombre" required>
-                                    <small class="help-text">Nombre descriptivo del producto</small>
-                                </div>
-                                <div class="form-group">
-                                    <label for="categoria">Categoría <span class="required">*</span></label>
-                                    <select id="categoria" required>
-                                        <option value="">Seleccione</option>
-                                        <option>Bebidas</option>
-                                        <option>Snacks</option>
-                                        <option>Aseo</option>
-                                        <option>Otros</option>
-                                    </select>
-                                    <small class="help-text">Clasificación del producto</small>
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="precio">Precio <span class="required">*</span></label>
-                                    <input type="number" id="precio" min="0" step="0.01" required>
-                                    <small class="help-text">Precio de venta al público</small>
-                                </div>
-                                <div class="form-group">
-                                    <label for="stock">Stock inicial <span class="required">*</span></label>
-                                    <input type="number" id="stock" min="0" required>
-                                    <small class="help-text">Cantidad disponible</small>
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="minimo">Stock mínimo <span class="required">*</span></label>
-                                    <input type="number" id="minimo" min="0" required>
-                                    <small class="help-text">Cantidad para alerta de stock bajo</small>
-                                </div>
-                                <div class="form-group">
-                                    <label for="ubicacion">Ubicación <span class="required">*</span></label>
-                                    <input type="text" id="ubicacion" placeholder="Ej: Bodega, Recepción" required>
-                                    <small class="help-text">Dónde se almacena el producto</small>
-                                </div>
-                            </div>
-                            <div class="form-actions">
-                                <button type="submit" class="submit-btn">
-                                    <i class="fas fa-save"></i> Guardar
-                                </button>
-                                <button type="button" class="cancel-btn" onclick="confirmCancel(event, 'inventario')">
-                                    <i class="fas fa-times"></i> Cancelar
-                                </button>
-                            </div>
-                            <div class="msg" id="msgProductoForm"></div>
-                        </form>
-                    </div>
-                </section>
-
-                <!-- Venta Form -->
-                <section id="venta-form" class="content-section">
-                    <div class="section-header">
-                        <h2><i class="fas fa-cash-register"></i> Registrar Venta</h2>
-                        <button class="secondary-btn" onclick="mostrarSeccion('dashboard')">
-                            <i class="fas fa-arrow-left"></i> Volver al Dashboard
-                        </button>
-                    </div>
-                    
-                    <div class="card form-card">
-                        <h3><i class="fas fa-shopping-cart"></i> Nueva venta</h3>
-                        <form id="ventaForm">
-                            <div class="form-row">
-                                <div class="form-group">
-                                <label for="producto">Producto</label>
-                                <input list="productosList" id="ventaProductoSearch" placeholder="Buscar producto..." required autocomplete="off">
-                                <input type="hidden" id="ventaProductoId">
-                                <datalist id="productosList"></datalist>
-                                </div>
-                                <div class="form-group">
-                                    <label for="cantidad">Cantidad</label>
-                                    <input type="number" id="cantidad" min="1" value="1" required>
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="tipo">Tipo</label>
-                                    <select id="tipo" required onchange="cambiarTipoVenta()">
-                                        <option value="">Seleccione</option>
-                                        <option value="TIENDA">Venta tienda</option>
-                                        <option value="HABITACION">Consumo habitación</option>
-                                    </select>
-                                </div>
-                                <div class="form-group" id="campoHabitacionContainer" style="display: none;">
-                                    <label for="habitacionVenta">Habitación</label>
-                                    <input type="number" id="habitacionVenta" min="1" max="26">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="pago">Método de pago</label>
-                                <select id="pago" required>
-                                    <option value="">Seleccione</option>
-                                    <option selected>Efectivo</option>
-                                    <option>Tarjeta</option>
-                                    <option>Transferencia</option>
-                                </select>
-                            </div>
-                            <div class="form-actions">
-                                <button type="submit" class="submit-btn">
-                                    <i class="fas fa-check"></i> Registrar Venta
-                                </button>
-                                <button type="button" class="cancel-btn" onclick="confirmCancel(event, 'dashboard')">
-                                    <i class="fas fa-times"></i> Cancelar
-                                </button>
-                            </div>
-                            <div class="msg" id="msgVentaForm"></div>
-                        </form>
-                    </div>
-                </section>
-
-                <!-- Reserva Form -->
-                <section id="reserva-form" class="content-section">
-                    <div class="section-header">
-                        <h2><i class="fas fa-calendar-check"></i> Reserva de Habitación</h2>
-                        <button class="secondary-btn" onclick="mostrarSeccion('habitaciones')">
-                            <i class="fas fa-arrow-left"></i> Volver a Habitaciones
-                        </button>
-                    </div>
-                    
-                    <div class="card form-card">
-                        <h3><i class="fas fa-calendar-plus"></i> Agendar reserva</h3>
-                        <form id="reservaForm">
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="habitacionReserva">Habitación</label>
-                                    <input type="number" id="habitacionReserva" min="1" max="26" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="clienteReserva">Nombre del cliente</label>
-                                    <input type="text" id="clienteReserva" required>
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="inicioReserva">Fecha inicio</label>
-                                    <input type="date" id="inicioReserva" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="finReserva">Fecha fin</label>
-                                    <input type="date" id="finReserva" required>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="obsReserva">Observaciones</label>
-                                <textarea id="obsReserva" rows="3"></textarea>
-                            </div>
-                            <div class="form-actions">
-                                <button type="submit" class="submit-btn">
-                                    <i class="fas fa-calendar-check"></i> Guardar Reserva
-                                </button>
-                                <button type="button" class="cancel-btn" onclick="confirmCancel(event, 'habitaciones')">
-                                    <i class="fas fa-times"></i> Cancelar
-                                </button>
-                            </div>
-                            <div class="msg" id="msgReservaForm"></div>
-                        </form>
-                    </div>
-                </section>
-            </div>
-        </main>
+    <!-- Cyber Background -->
+    <div id="cyber-background" class="cyber-background">
+        <div id="grid-overlay" class="grid-overlay"></div>
+        <div id="radial-glow" class="radial-glow"></div>
     </div>
 
-    <script src="script.js"></script>
+    <!-- Navbar -->
+    <nav id="navbar" class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">
+                <div class="brand-icon-wrapper">
+                    <div class="brand-icon-glow"></div>
+                    <div class="brand-icon">
+                        <i data-feather="fingerprint"></i>
+                    </div>
+                </div>
+                <div class="brand-text">
+                    <span class="brand-name">GABRIEL IBARRA</span>
+                    <span class="brand-subtitle">Security Analyst</span>
+                </div>
+            </div>
+
+            <div class="navbar-links" id="navbar-links">
+                <a href="#inicio" class="nav-link active" data-section="inicio">Inicio</a>
+                <a href="#perfil" class="nav-link" data-section="perfil">Perfil</a>
+                <a href="#proyectos" class="nav-link" data-section="proyectos">Proyectos</a>
+                <a href="#educacion" class="nav-link" data-section="educacion">Educación</a>
+                <a href="#certificaciones" class="nav-link" data-section="certificaciones">Certificaciones</a>
+                
+                <div class="navbar-social">
+                    <a href="https://linkedin.com" target="_blank" rel="noopener" aria-label="LinkedIn">
+                        <i data-feather="linkedin"></i>
+                    </a>
+                    <a href="mailto:ibarragomezangelgabriel@gmail.com" aria-label="Email">
+                        <i data-feather="mail"></i>
+                    </a>
+                </div>
+            </div>
+
+            <button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu">
+                <i data-feather="menu" id="menu-icon"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobile-menu">
+        <div class="mobile-menu-header">
+            <i data-feather="fingerprint"></i>
+            <button class="mobile-menu-close" id="mobile-menu-close" aria-label="Close menu">
+                <i data-feather="x"></i>
+            </button>
+        </div>
+        <div class="mobile-menu-links">
+            <a href="#inicio" class="mobile-menu-link">
+                Inicio
+                <i data-feather="chevron-right"></i>
+            </a>
+            <a href="#perfil" class="mobile-menu-link">
+                Perfil
+                <i data-feather="chevron-right"></i>
+            </a>
+            <a href="#proyectos" class="mobile-menu-link">
+                Proyectos
+                <i data-feather="chevron-right"></i>
+            </a>
+            <a href="#educacion" class="mobile-menu-link">
+                Educación
+                <i data-feather="chevron-right"></i>
+            </a>
+            <a href="#certificaciones" class="mobile-menu-link">
+                Certificaciones
+                <i data-feather="chevron-right"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        
+        <!-- Hero Section -->
+        <section id="inicio" class="hero-section">
+            <div class="hero-grid">
+                <div class="hero-content">
+                    <div class="hero-badge">
+                        <span class="status-dot">
+                            <span class="status-ping"></span>
+                            <span class="status-circle"></span>
+                        </span>
+                        <span class="badge-text">Available for Junior Roles</span>
+                    </div>
+
+                    <div class="hero-title">
+                        <h1>
+                            ANGEL<br>
+                            <span class="gradient-text">GABRIEL.</span>
+                        </h1>
+                        <p class="hero-description">
+                            Especializado en <span class="highlight">ciberseguridad y redes</span>. 
+                            Certificado <span class="highlight-cyan">(ISC)² CC</span>. Enfocado en la resiliencia de infraestructuras críticas y hardening de sistemas.
+                        </p>
+                    </div>
+
+                    <div class="hero-actions">
+                        <button class="btn-primary">
+                            <i data-feather="download"></i>
+                            Descargar CV
+                        </button>
+                        <div class="english-badge">
+                            <span class="english-level">B1</span>
+                            <div class="divider"></div>
+                            <span class="english-text">English<br>Technical</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Core Stack Terminal -->
+                <div class="stack-terminal">
+                    <div class="terminal-glow"></div>
+                    <div class="terminal-container">
+                        <div class="terminal-header">
+                            <div class="terminal-dots">
+                                <span class="dot red"></span>
+                                <span class="dot yellow"></span>
+                                <span class="dot green"></span>
+                            </div>
+                            <span class="terminal-title">
+                                <i data-feather="terminal"></i>
+                                stack_v2.0.sh
+                            </span>
+                        </div>
+                        <div class="terminal-body">
+                            <div class="skills-section">
+                                <div class="skill-item" data-level="85">
+                                    <div class="skill-header">
+                                        <span class="skill-name">Análisis de Vulnerabilidades</span>
+                                        <span class="skill-percent">85%</span>
+                                    </div>
+                                    <div class="skill-bar">
+                                        <div class="skill-progress cyan-blue"></div>
+                                    </div>
+                                </div>
+                                <div class="skill-item" data-level="90">
+                                    <div class="skill-header">
+                                        <span class="skill-name">Redes TCP/IP & Control Acceso</span>
+                                        <span class="skill-percent">90%</span>
+                                    </div>
+                                    <div class="skill-bar">
+                                        <div class="skill-progress blue-indigo"></div>
+                                    </div>
+                                </div>
+                                <div class="skill-item" data-level="88">
+                                    <div class="skill-header">
+                                        <span class="skill-name">Hardening de Sistemas (Linux)</span>
+                                        <span class="skill-percent">88%</span>
+                                    </div>
+                                    <div class="skill-bar">
+                                        <div class="skill-progress purple-rose"></div>
+                                    </div>
+                                </div>
+                                <div class="skill-item" data-level="80">
+                                    <div class="skill-header">
+                                        <span class="skill-name">Respuesta a Incidentes</span>
+                                        <span class="skill-percent">80%</span>
+                                    </div>
+                                    <div class="skill-bar">
+                                        <div class="skill-progress emerald-teal"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="tools-grid">
+                                <div class="tool-card">
+                                    <i data-feather="cpu"></i>
+                                    <p class="tool-label">Tools</p>
+                                    <p class="tool-value">NMAP, Wireshark, Kali</p>
+                                </div>
+                                <div class="tool-card">
+                                    <i data-feather="database"></i>
+                                    <p class="tool-label">Cloud</p>
+                                    <p class="tool-value">Supabase, n8n, API</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Perfil Section -->
+        <section id="perfil" class="section perfil-section">
+            <div class="section-grid">
+                <div class="section-header">
+                    <div class="section-title">
+                        <div class="title-icon">
+                            <i data-feather="user-check"></i>
+                        </div>
+                        <h2>Perfil</h2>
+                    </div>
+                    <p class="section-subtitle">Sobre mi trayectoria</p>
+                </div>
+
+                <div class="section-content">
+                    <div class="profile-card">
+                        <div class="card-glow"></div>
+                        <div class="card-content">
+                            <p class="profile-text">
+                                Como estudiante de <span class="highlight">9º semestre de Ingeniería de Sistemas</span>, he orientado mi carrera hacia la protección de activos digitales. 
+                                Poseo un dominio sólido en entornos <span class="highlight-cyan">Linux</span>, administración de redes seguras y automatización de procesos mediante IA. 
+                                Mi enfoque combina la <span class="highlight">rigurosidad técnica</span> con una mentalidad proactiva frente a las amenazas emergentes.
+                            </p>
+                            <div class="profile-tags">
+                                <span class="tag">Pensamiento Analítico</span>
+                                <span class="tag">Ética Hacker</span>
+                                <span class="tag">Resolución de Problemas</span>
+                                <span class="tag">Adaptabilidad</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Proyectos Section -->
+        <section id="proyectos" class="section proyectos-section">
+            <div class="section-title">
+                <div class="title-icon">
+                    <i data-feather="briefcase"></i>
+                </div>
+                <h2>Proyectos</h2>
+            </div>
+            <p class="section-subtitle">Experiencia técnica aplicada</p>
+
+            <div class="projects-grid">
+                <div class="project-card">
+                    <div class="project-top-line"></div>
+                    <div class="project-header">
+                        <div class="project-icon">
+                            <i data-feather="terminal"></i>
+                        </div>
+                        <div class="project-dots">
+                            <span class="dot"></span>
+                            <span class="dot"></span>
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <h3 class="project-title">Laboratorio Servidores Seguros</h3>
+                        <p class="project-subtitle">UBUNTU SERVER OPS</p>
+                        <p class="project-description">
+                            Configuración integral de servidores DNS, DHCP, FTP, SFTP y SSH con políticas de seguridad, hardening y gestión de claves SSH vía PuTTY.
+                        </p>
+                        <div class="project-tech">
+                            <span class="tech-tag">Linux</span>
+                            <span class="tech-tag">SSH</span>
+                            <span class="tech-tag">Hardening</span>
+                            <span class="tech-tag">PuTTY</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="project-card">
+                    <div class="project-top-line"></div>
+                    <div class="project-header">
+                        <div class="project-icon">
+                            <i data-feather="message-square"></i>
+                        </div>
+                        <div class="project-dots">
+                            <span class="dot"></span>
+                            <span class="dot"></span>
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <h3 class="project-title">Automatización con IA & n8n</h3>
+                        <p class="project-subtitle">WHATSAPP CLOUD API</p>
+                        <p class="project-description">
+                            Flujo automatizado para gestión de pedidos. Integración con Supabase para órdenes en tiempo real. Reducción del 30% en tiempos de atención.
+                        </p>
+                        <div class="project-tech">
+                            <span class="tech-tag">n8n</span>
+                            <span class="tech-tag">Supabase</span>
+                            <span class="tech-tag">JS</span>
+                            <span class="tech-tag">Cloud API</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="project-card">
+                    <div class="project-top-line"></div>
+                    <div class="project-header">
+                        <div class="project-icon">
+                            <i data-feather="map-pin"></i>
+                        </div>
+                        <div class="project-dots">
+                            <span class="dot"></span>
+                            <span class="dot"></span>
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <h3 class="project-title">Plataforma Restpuntos</h3>
+                        <p class="project-subtitle">GEOLOCALIZACIÓN & SQL</p>
+                        <p class="project-description">
+                            Sistema de fidelización para restaurantes con gestión de transacciones en tiempo real y buscador mediante geoposicionamiento.
+                        </p>
+                        <div class="project-tech">
+                            <span class="tech-tag">React</span>
+                            <span class="tech-tag">PostgreSQL</span>
+                            <span class="tech-tag">Supabase</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Educación & Certificaciones Section -->
+        <section id="educacion" class="section educacion-section">
+            <div class="education-grid">
+                <div class="education-col">
+                    <div class="section-title">
+                        <div class="title-icon">
+                            <i data-feather="book-open"></i>
+                        </div>
+                        <h2>Educación</h2>
+                    </div>
+
+                    <div class="education-card">
+                        <div class="education-content">
+                            <h3 class="education-title">Univ. Simón Bolívar</h3>
+                            <p class="education-degree">Ingeniería de Sistemas</p>
+                            <div class="education-details">
+                                <div class="detail-item">
+                                    <i data-feather="activity"></i>
+                                    <span>9º Semestre (2021 - Presente)</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i data-feather="map-pin"></i>
+                                    <span>Cúcuta, Colombia</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="education-bg-icon">
+                            <i data-feather="cpu"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="certifications-col" id="certificaciones">
+                    <div class="section-title">
+                        <div class="title-icon">
+                            <i data-feather="award"></i>
+                        </div>
+                        <h2>Validaciones</h2>
+                    </div>
+
+                    <div class="certifications-list">
+                        <div class="cert-item">
+                            <div class="cert-icon">
+                                <i data-feather="shield"></i>
+                            </div>
+                            <div class="cert-content">
+                                <h4 class="cert-title">Certified in Cybersecurity (CC)</h4>
+                                <div class="cert-meta">
+                                    <span class="cert-org">(ISC)²</span>
+                                    <span class="cert-dot"></span>
+                                    <span class="cert-year">2025</span>
+                                </div>
+                            </div>
+                            <i data-feather="chevron-right" class="cert-arrow"></i>
+                        </div>
+
+                        <div class="cert-item">
+                            <div class="cert-icon">
+                                <i data-feather="globe"></i>
+                            </div>
+                            <div class="cert-content">
+                                <h4 class="cert-title">Technical Intro to Cybersecurity 1.0</h4>
+                                <div class="cert-meta">
+                                    <span class="cert-org">Fortinet</span>
+                                    <span class="cert-dot"></span>
+                                    <span class="cert-year">2025</span>
+                                </div>
+                            </div>
+                            <i data-feather="chevron-right" class="cert-arrow"></i>
+                        </div>
+
+                        <div class="cert-item">
+                            <div class="cert-icon">
+                                <i data-feather="lock"></i>
+                            </div>
+                            <div class="cert-content">
+                                <h4 class="cert-title">Introduction to the Threat Landscape 2.0</h4>
+                                <div class="cert-meta">
+                                    <span class="cert-org">Fortinet</span>
+                                    <span class="cert-dot"></span>
+                                    <span class="cert-year">2025</span>
+                                </div>
+                            </div>
+                            <i data-feather="chevron-right" class="cert-arrow"></i>
+                        </div>
+
+                        <div class="cert-item">
+                            <div class="cert-icon">
+                                <i data-feather="terminal"></i>
+                            </div>
+                            <div class="cert-content">
+                                <h4 class="cert-title">Bootcamp en Programación</h4>
+                                <div class="cert-meta">
+                                    <span class="cert-org">MinTIC & ANDES</span>
+                                    <span class="cert-dot"></span>
+                                    <span class="cert-year">2025</span>
+                                </div>
+                            </div>
+                            <i data-feather="chevron-right" class="cert-arrow"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="cta-section">
+            <div class="cta-card">
+                <div class="cta-bg-gradient"></div>
+                <div class="cta-blur-left"></div>
+                
+                <div class="cta-content">
+                    <div class="cta-text">
+                        <h2>
+                            Iniciemos el <span class="gradient-text">Despliegue.</span>
+                        </h2>
+                        <p>
+                            ¿Buscas un perfil con compromiso, bases sólidas en seguridad y capacidad de adaptación? Hablemos de cómo puedo sumar a tu equipo.
+                        </p>
+                    </div>
+                    <div class="cta-actions">
+                        <a href="mailto:ibarragomezangelgabriel@gmail.com" class="cta-btn-primary">
+                            Contáctame ahora
+                        </a>
+                        <a href="https://linkedin.com" target="_blank" rel="noopener" class="cta-btn-secondary">
+                            <i data-feather="linkedin"></i>
+                            Ver LinkedIn
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-info">
+                <p class="footer-copyright">© 2025 ANGEL GABRIEL IBARRA GOMEZ</p>
+                <p class="footer-tagline">Sistemas Seguros // Cúcuta, CO</p>
+            </div>
+            <div class="footer-social">
+                <a href="mailto:ibarragomezangelgabriel@gmail.com" aria-label="Email">
+                    <i data-feather="mail"></i>
+                </a>
+                <a href="https://linkedin.com" target="_blank" rel="noopener" aria-label="LinkedIn">
+                    <i data-feather="linkedin"></i>
+                </a>
+                <a href="https://github.com" target="_blank" rel="noopener" aria-label="GitHub">
+                    <i data-feather="github"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="js/main.js"></script>
 </body>
-</html>
+                        </html>
