@@ -1,7 +1,7 @@
 
 // Variables globales
 let productos = [];
-let habitaciones = [];
+let habitaciones = []; 
 let ventasHistorial = [];
 let reservasHistorial = [];
 let movimientos = [];
