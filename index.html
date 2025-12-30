@@ -1,468 +1,683 @@
-import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
-import { 
-  Shield, Terminal, Database, Network, ExternalLink, 
-  Mail, Linkedin, Download, Award, ChevronRight,
-  Cpu, Lock, Globe, Zap, Target, Activity, HardDrive,
-  Menu, X, ChevronDown, CheckCircle2, Fingerprint, 
-  MessageSquare, MapPin, Phone, Github, Code, Server, 
-  Briefcase, BookOpen, UserCheck, Eye, Scan, Smartphone
-} from 'lucide-react';
 
-// --- DATA CONFIGURATION ---
-
-const SKILLS = [
-  { name: "Análisis de Vulnerabilidades", level: 85, color: "from-cyan-500 to-blue-500" },
-  { name: "Redes TCP/IP & Control Acceso", level: 90, color: "from-blue-500 to-indigo-600" },
-  { name: "Hardening de Sistemas (Linux)", level: 88, color: "from-purple-500 to-rose-500" },
-  { name: "Respuesta a Incidentes", level: 80, color: "from-emerald-500 to-teal-500" },
-];
-
-const PROJECTS = [
-  {
-    title: "Laboratorio Servidores Seguros",
-    subtitle: "UBUNTU SERVER OPS",
-    desc: "Configuración integral de servidores DNS, DHCP, FTP, SFTP y SSH con políticas de seguridad, hardening y gestión de claves SSH vía PuTTY.",
-    tech: ["Linux", "SSH", "Hardening", "PuTTY"],
-    icon: <Terminal size={20}/>
-  },
-  {
-    title: "Automatización con IA & n8n",
-    subtitle: "WHATSAPP CLOUD API",
-    desc: "Flujo automatizado para gestión de pedidos. Integración con Supabase para órdenes en tiempo real. Reducción del 30% en tiempos de atención.",
-    tech: ["n8n", "Supabase", "JS", "Cloud API"],
-    icon: <MessageSquare size={20}/>
-  },
-  {
-    title: "Plataforma Restpuntos",
-    subtitle: "GEOLOCALIZACIÓN & SQL",
-    desc: "Sistema de fidelización para restaurantes con gestión de transacciones en tiempo real y buscador mediante geoposicionamiento.",
-    tech: ["React", "PostgreSQL", "Supabase"],
-    icon: <MapPin size={20}/>
-  }
-];
-
-const CERTIFICATIONS = [
-  { title: "Certified in Cybersecurity (CC)", org: "(ISC)²", year: "2025", icon: <Shield size={24}/> },
-  { title: "Technical Intro to Cybersecurity 1.0", org: "Fortinet", year: "2025", icon: <Network size={24}/> },
-  { title: "Introduction to the Threat Landscape 2.0", org: "Fortinet", year: "2025", icon: <Lock size={24}/> },
-  { title: "Bootcamp en Programación", org: "MinTIC & ANDES", year: "2025", icon: <Terminal size={24}/> },
-  { title: "Crea Agentes de IA Sin Programar", org: "Udemy n8n", year: "2024", icon: <Cpu size={24}/> },
-  { title: "Fundamentos de Python", org: "Platzi", year: "2023", icon: <Code size={24}/> }
-];
-
-// --- COMPONENTS ---
-
-const CyberBackground = ({ mousePos }) => (
-  <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden bg-[#020617]">
-    <div 
-      className="absolute inset-0 opacity-[0.05] transition-opacity duration-700"
-      style={{
-        backgroundImage: `linear-gradient(to right, #1e293b 1px, transparent 1px), linear-gradient(to bottom, #1e293b 1px, transparent 1px)`,
-        backgroundSize: '50px 50px',
-        maskImage: `radial-gradient(circle 500px at ${mousePos.x}px ${mousePos.y}px, black, transparent)`
-      }}
-    />
-    <div 
-      className="absolute inset-0 opacity-[0.08]"
-      style={{ 
-        background: `radial-gradient(1000px at ${mousePos.x}px ${mousePos.y}px, rgba(6, 182, 212, 0.15), transparent 80%)`,
-      }}
-    />
-  </div>
-);
-
-const SectionTitle = ({ icon: Icon, title, subtitle }) => (
-  <div className="mb-12">
-    <div className="flex items-center gap-3 mb-2">
-      <div className="p-2 bg-cyan-500/10 rounded-lg">
-        <Icon className="text-cyan-500" size={24} />
-      </div>
-      <h2 className="text-3xl font-black text-white tracking-tighter uppercase">{title}</h2>
-    </div>
-    {subtitle && <p className="text-slate-500 font-mono text-xs uppercase tracking-widest ml-12">{subtitle}</p>}
-  </div>
-);
-
-const SkillBar = ({ skill, index, isLoaded }) => (
-  <div className="space-y-2">
-    <div className="flex justify-between text-[10px] font-mono uppercase tracking-wider">
-      <span className="text-slate-300">{skill.name}</span>
-      <span className="text-cyan-400">{skill.level}%</span>
-    </div>
-    <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden border border-white/5 p-[1px]">
-      <div 
-        className={`h-full bg-gradient-to-r ${skill.color} transition-all duration-1000 ease-out`}
-        style={{ width: isLoaded ? `${skill.level}%` : '0%', transitionDelay: `${index * 100}ms` }}
-      />
-    </div>
-  </div>
-);
-
-const App = () => {
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [activeSection, setActiveSection] = useState('inicio');
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const rafRef = useRef();
-
-  // Optimización del movimiento del mouse con requestAnimationFrame
-  const handleMouseMove = useCallback((e) => {
-    if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    rafRef.current = requestAnimationFrame(() => {
-      setMousePos({ x: e.clientX, y: e.clientY });
-    });
-  }, []);
-
-  useEffect(() => {
-    window.addEventListener('mousemove', handleMouseMove);
-    const timer = setTimeout(() => setIsLoaded(true), 100);
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) setActiveSection(entry.target.id);
-      });
-    }, { threshold: 0.3 });
-    
-    document.querySelectorAll('section[id]').forEach(s => observer.observe(s));
-
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      clearTimeout(timer);
-      observer.disconnect();
-    };
-  }, [handleMouseMove]);
-
-  const navLinks = [
-    { name: 'Inicio', id: 'inicio' },
-    { name: 'Perfil', id: 'perfil' },
-    { name: 'Proyectos', id: 'proyectos' },
-    { name: 'Educación', id: 'educacion' },
-    { name: 'Certificaciones', id: 'certificaciones' },
-  ];
-
-  return (
-    <div className={`min-h-screen bg-[#020617] text-slate-300 selection:bg-cyan-500/30 selection:text-cyan-200 transition-opacity duration-700 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
-      <CyberBackground mousePos={mousePos} />
-
-      {/* --- NAVBAR --- */}
-      <nav className="fixed top-0 w-full z-[100] bg-[#020617]/80 backdrop-blur-xl border-b border-white/5 h-20 flex items-center transition-all duration-300">
-        <div className="max-w-7xl mx-auto w-full flex justify-between items-center px-6">
-          <div className="flex items-center gap-4 group cursor-default">
-            <div className="relative">
-                <div className="absolute inset-0 bg-cyan-500 blur-md opacity-20 group-hover:opacity-40 transition-opacity" />
-                <div className="relative bg-[#0a0f1d] border border-cyan-500/30 p-2 rounded-xl">
-                    <Fingerprint className="text-cyan-400 w-6 h-6" />
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Hotelero Completo</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        window.addEventListener('error', function(e) {
+            console.error('ERROR GLOBAL:', e.error);
+        });
+        console.log('Script de depuración activo');
+    </script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar de Navegación (Desktop/Tablet) -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">🏨</div>
+                <div class="logo-text">
+                    <h2>Hotel</h2>
+                    <p>Los Angeles</p>
                 </div>
             </div>
-            <div className="flex flex-col">
-              <span className="text-white font-black text-xl leading-none tracking-tighter uppercase">GABRIEL IBARRA</span>
-              <span className="text-[10px] text-cyan-500 font-mono tracking-[0.2em] uppercase">Security Analyst</span>
-            </div>
-          </div>
-          
-          <div className="hidden lg:flex items-center gap-10">
-            {navLinks.map((link) => (
-              <a 
-                key={link.id} 
-                href={`#${link.id}`} 
-                className={`text-[10px] font-mono uppercase tracking-[0.2em] transition-all relative py-2 group`}
-              >
-                <span className={activeSection === link.id ? 'text-cyan-400' : 'text-slate-500 group-hover:text-white'}>
-                    {link.name}
-                </span>
-                <span className={`absolute bottom-0 left-0 h-[2px] bg-cyan-500 transition-all duration-300 ${activeSection === link.id ? 'w-full' : 'w-0'}`} />
-              </a>
-            ))}
-            <div className="flex gap-5 border-l border-white/10 pl-8">
-              <a href="https://linkedin.com" target="_blank" className="hover:text-cyan-400 transition-colors hover:scale-110"><Linkedin size={20} /></a>
-              <a href="mailto:email@domain.com" className="hover:text-cyan-400 transition-colors hover:scale-110"><Mail size={20} /></a>
-            </div>
-          </div>
-
-          <button className="lg:hidden p-2 text-white hover:bg-white/5 rounded-lg" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-            {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
-          </button>
-        </div>
-      </nav>
-
-      {/* --- MOBILE MENU --- */}
-      <div className={`fixed inset-0 bg-[#020617] z-[110] flex flex-col p-10 transition-transform duration-500 lg:hidden ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-        <div className="flex justify-between items-center mb-16">
-            <Fingerprint className="text-cyan-500 w-10 h-10" />
-            <button onClick={() => setIsMenuOpen(false)}><X size={40} className="text-slate-500" /></button>
-        </div>
-        <div className="flex flex-col gap-8">
-          {navLinks.map((link) => (
-            <a key={link.id} href={`#${link.id}`} onClick={() => setIsMenuOpen(false)} className="text-4xl font-black text-white uppercase tracking-tighter hover:text-cyan-400 transition-colors flex items-center justify-between">
-              {link.name} <ChevronRight size={30} className="text-cyan-900" />
-            </a>
-          ))}
-        </div>
-      </div>
-
-      <main className="relative z-10 max-w-7xl mx-auto px-6">
-        
-        {/* --- HERO --- */}
-        <section id="inicio" className="min-h-screen flex flex-col justify-center pt-24">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
-            <div className="lg:col-span-7 space-y-12">
-              <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-cyan-500/5 border border-cyan-500/10 text-cyan-400 backdrop-blur-sm">
-                <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
-                </span>
-                <span className="text-[10px] font-mono font-bold tracking-[0.2em] uppercase">Available for Junior Roles</span>
-              </div>
-              
-              <div className="space-y-6">
-                <h1 className="text-6xl sm:text-7xl md:text-8xl font-black text-white leading-[0.85] tracking-tighter uppercase">
-                  ANGEL <br />
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-600">GABRIEL.</span>
-                </h1>
-                <p className="text-slate-400 text-lg md:text-xl leading-relaxed max-w-xl font-light border-l-2 border-cyan-500/30 pl-8">
-                  Especializado en <span className="text-white font-semibold">ciberseguridad y redes</span>. 
-                  Certificado <span className="text-cyan-400">(ISC)² CC</span>. Enfocado en la resiliencia de infraestructuras críticas y hardening de sistemas.
-                </p>
-              </div>
-
-              <div className="flex flex-wrap gap-4 pt-4">
-                <button className="px-10 py-5 bg-cyan-500 text-[#020617] font-black text-xs uppercase rounded-xl flex items-center gap-3 hover:bg-cyan-400 hover:scale-[1.02] active:scale-95 transition-all shadow-[0_0_30px_rgba(6,182,212,0.2)]">
-                  <Download size={18} /> Descargar CV
+            <nav class="nav-menu">
+                <button class="nav-btn" data-section="dashboard">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
                 </button>
-                <div className="flex items-center gap-4 px-8 py-5 bg-white/5 border border-white/10 rounded-xl backdrop-blur-sm">
-                  <span className="text-white font-black tracking-tighter text-2xl">B1</span>
-                  <div className="h-8 w-[1px] bg-white/10" />
-                  <span className="text-[10px] font-mono text-slate-500 uppercase leading-tight tracking-widest text-left">English<br/>Technical</span>
+                <button class="nav-btn" data-section="mvp">
+                    <i class="fas fa-home"></i>
+                    <span>MVP Principal</span>
+                </button>
+                <button class="nav-btn" data-section="habitaciones">
+                    <i class="fas fa-bed"></i>
+                    <span>Habitaciones <span class="nav-badge" id="roomsBadge">(0)</span></span>
+                </button>
+                <button class="nav-btn" data-section="inventario">
+                    <i class="fas fa-boxes"></i>
+                    <span>Inventario <span class="nav-badge" id="inventoryBadge">(0)</span></span>
+                </button>
+                <button class="nav-btn" data-section="producto-form">
+                    <i class="fas fa-edit"></i>
+                    <span>Editar Producto</span>
+                </button>
+                <button class="nav-btn" data-section="venta-form">
+                    <i class="fas fa-cash-register"></i>
+                    <span>Registrar Venta</span>
+                </button>
+                <button class="nav-btn" data-section="reserva-form">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Reservar Habitación</span>
+                </button>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="system-info">
+                    <i class="fas fa-circle"></i>
+                    <span>Sistema Activo</span>
                 </div>
-              </div>
+                <div class="total-modules">
+                    <i class="fas fa-cube"></i>
+                    <span>7 Módulos</span>
+                </div>
             </div>
+        </aside>
 
-            {/* --- CORE STACK TERMINAL --- */}
-            <div className="lg:col-span-5 relative group">
-              <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-3xl blur opacity-10 group-hover:opacity-20 transition duration-1000"></div>
-              <div className="relative bg-[#0a0f1d] border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
-                <div className="px-6 py-4 bg-white/[0.03] border-b border-white/5 flex justify-between items-center">
-                  <div className="flex gap-2.5">
-                    <div className="w-3 h-3 rounded-full bg-[#ff5f56]" />
-                    <div className="w-3 h-3 rounded-full bg-[#ffbd2e]" />
-                    <div className="w-3 h-3 rounded-full bg-[#27c93f]" />
-                  </div>
-                  <span className="text-[10px] font-mono text-slate-500 tracking-[0.2em] uppercase flex items-center gap-2">
-                    <Terminal size={14} /> stack_v2.0.sh
-                  </span>
-                </div>
-                <div className="p-10 space-y-10">
-                  <div className="space-y-8">
-                    {SKILLS.map((skill, i) => (
-                      <SkillBar key={skill.name} skill={skill} index={i} isLoaded={isLoaded} />
-                    ))}
-                  </div>
-                  <div className="grid grid-cols-2 gap-5">
-                    <div className="p-5 bg-white/[0.03] border border-white/5 rounded-2xl">
-                        <Cpu size={20} className="text-cyan-500 mb-3" />
-                        <p className="text-[10px] text-slate-500 uppercase mb-2 font-mono">Tools</p>
-                        <p className="text-xs font-bold font-mono text-white tracking-tight">NMAP, Wireshark, Kali</p>
-                    </div>
-                    <div className="p-5 bg-white/[0.03] border border-white/5 rounded-2xl">
-                        <Database size={20} className="text-blue-500 mb-3" />
-                        <p className="text-[10px] text-slate-500 uppercase mb-2 font-mono">Cloud</p>
-                        <p className="text-xs font-bold font-mono text-white tracking-tight">Supabase, n8n, API</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
+        <!-- Bottom Navigation (Móvil) -->
+        <nav class="bottom-nav">
+            <div class="bottom-nav-items">
+                <button class="bottom-nav-btn active" data-section="dashboard">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Inicio</span>
+                </button>
+                <button class="bottom-nav-btn" data-section="venta-form">
+                    <i class="fas fa-cash-register"></i>
+                    <span>Venta</span>
+                </button>
+                <button class="bottom-nav-btn" data-section="reserva-form">
+                    <i class="fas fa-calendar-plus"></i>
+                    <span>Reserva</span>
+                </button>
+                <button class="bottom-nav-btn" data-section="habitaciones">
+                    <i class="fas fa-bed"></i>
+                    <span>Hab.</span>
+                </button>
+                <button class="bottom-nav-btn" data-section="inventario">
+                    <i class="fas fa-boxes"></i>
+                    <span>Inventario</span>
+                </button>
             </div>
-          </div>
-        </section>
+        </nav>
 
-        {/* --- PERFIL --- */}
-        <section id="perfil" className="py-32 border-t border-white/5">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
-            <div className="lg:col-span-4">
-              <SectionTitle icon={UserCheck} title="Perfil" subtitle="Sobre mi trayectoria" />
-            </div>
-            <div className="lg:col-span-8">
-              <div className="relative group">
-                <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500/20 to-transparent blur opacity-0 group-hover:opacity-100 transition duration-500"></div>
-                <div className="relative bg-white/[0.02] border border-white/10 p-10 rounded-3xl backdrop-blur-sm">
-                    <p className="text-xl md:text-2xl text-slate-300 leading-relaxed font-light">
-                    Como estudiante de <span className="text-white font-medium">9º semestre de Ingeniería de Sistemas</span>, he orientado mi carrera hacia la protección de activos digitales. 
-                    Poseo un dominio sólido en entornos <span className="text-cyan-400">Linux</span>, administración de redes seguras y automatización de procesos mediante IA. 
-                    Mi enfoque combina la <span className="text-white">rigurosidad técnica</span> con una mentalidad proactiva frente a las amenazas emergentes.
-                    </p>
-                    <div className="flex flex-wrap gap-3 mt-10">
-                    {["Pensamiento Analítico", "Ética Hacker", "Resolución de Problemas", "Adaptabilidad"].map(tag => (
-                        <span key={tag} className="text-[10px] font-mono px-4 py-2 bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 rounded-lg uppercase tracking-widest">
-                        {tag}
-                        </span>
-                    ))}
-                    </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* --- PROYECTOS --- */}
-        <section id="proyectos" className="py-32 border-t border-white/5">
-          <SectionTitle icon={Briefcase} title="Proyectos" subtitle="Experiencia técnica aplicada" />
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {PROJECTS.map((p, i) => (
-              <div key={i} className="group relative bg-[#0a0f1d] border border-white/5 rounded-3xl overflow-hidden hover:border-cyan-500/30 transition-all duration-500 hover:-translate-y-2">
-                <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-cyan-500 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                <div className="p-10 space-y-8">
-                  <div className="flex justify-between items-start">
-                    <div className="p-4 bg-cyan-500/10 rounded-2xl border border-cyan-500/20 text-cyan-500 transition-transform group-hover:scale-110 group-hover:rotate-6">
-                        {p.icon}
-                    </div>
-                    <div className="flex gap-1">
-                        <div className="w-1.5 h-1.5 rounded-full bg-cyan-500/40" />
-                        <div className="w-1.5 h-1.5 rounded-full bg-cyan-500/40" />
-                    </div>
-                  </div>
-                  <div className="space-y-3">
-                    <h3 className="text-2xl font-black text-white group-hover:text-cyan-400 transition-colors tracking-tighter leading-tight uppercase">{p.title}</h3>
-                    <p className="text-[10px] font-mono text-slate-500 uppercase tracking-[0.2em]">{p.subtitle}</p>
-                  </div>
-                  <p className="text-sm text-slate-400 leading-relaxed font-light">{p.desc}</p>
-                  <div className="flex flex-wrap gap-2 pt-4">
-                    {p.tech.map(t => (
-                      <span key={t} className="text-[10px] font-mono px-3 py-1.5 bg-white/5 rounded-lg border border-white/5 text-slate-400 group-hover:border-cyan-500/20 group-hover:text-cyan-100 transition-all">{t}</span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* --- EDUCACIÓN & CERTIFICACIONES --- */}
-        <section id="educacion" className="py-32 border-t border-white/5">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-20">
-            <div>
-              <SectionTitle icon={BookOpen} title="Educación" />
-              <div className="bg-gradient-to-br from-cyan-500/10 to-transparent border border-cyan-500/20 p-10 rounded-[2.5rem] relative overflow-hidden group">
-                <div className="relative z-10">
-                    <h3 className="text-3xl font-black text-white uppercase tracking-tighter">Univ. Simón Bolívar</h3>
-                    <p className="text-cyan-500 font-mono text-sm mt-2 uppercase tracking-[0.2em] font-bold">Ingeniería de Sistemas</p>
-                    <div className="mt-8 flex flex-col gap-4 text-sm font-mono text-slate-400">
-                        <div className="flex items-center gap-3">
-                            <Activity size={16} className="text-cyan-500" /> 
-                            <span>9º Semestre (2021 - Presente)</span>
-                        </div>
-                        <div className="flex items-center gap-3">
-                            <MapPin size={16} className="text-cyan-500" /> 
-                            <span>Cúcuta, Colombia</span>
+        <!-- Contenido Principal -->
+        <main class="main-content">
+            <header class="main-header">
+                <div class="header-left">
+                    <div class="hotel-brand">
+                        <span class="brand-icon">🏨</span>
+                        <div class="brand-info">
+                            <h1>Hotel Los Angeles</h1>
+                            <p class="brand-tagline">Sistema de Gestión Hotelera</p>
                         </div>
                     </div>
                 </div>
-                <div className="absolute top-[-20%] right-[-10%] opacity-5 group-hover:opacity-10 transition-opacity rotate-12">
-                    <Cpu size={250} />
+                <div class="header-center">
+                    <h2 id="section-title" class="section-title">Dashboard</h2>
                 </div>
-              </div>
-            </div>
-
-            <div id="certificaciones">
-              <SectionTitle icon={Award} title="Validaciones" />
-              <div className="grid grid-cols-1 gap-4">
-                {CERTIFICATIONS.slice(0, 4).map((cert, i) => (
-                  <div key={i} className="flex items-center gap-6 p-6 bg-white/[0.02] border border-white/10 rounded-2xl hover:bg-white/[0.04] transition-all group">
-                    <div className="p-3 bg-white/5 rounded-xl text-slate-500 group-hover:text-cyan-500 transition-colors">
-                        {cert.icon}
+                <div class="header-search">
+                    <input type="text" id="globalSearch" placeholder="Buscar producto, reserva..." class="search-input">
+                    <i class="fas fa-search"></i>
+                    <div id="searchResults" class="search-results"></div>
+                </div>
+                <div class="header-right">
+                    <button class="action-btn" id="notifications-btn" title="Notificaciones">
+                        <i class="fas fa-bell"></i>
+                        <span>Notificaciones</span>
+                        <span class="notification-badge" id="notificationBadge" style="display:none;">0</span>
+                    </button>
+                    <button class="action-btn" id="theme-toggle-btn" title="Modo oscuro/claro">
+                        <i class="fas fa-moon"></i>
+                        <span>Tema</span>
+                    </button>
+                    <button class="action-btn" id="refresh-btn" title="Actualizar datos">
+                        <i class="fas fa-sync-alt"></i>
+                        <span>Actualizar</span>
+                    </button>
+                    <button class="action-btn" id="help-btn" title="Ayuda del sistema">
+                        <i class="fas fa-question-circle"></i>
+                        <span>Ayuda</span>
+                    </button>
+                </div>
+                <!-- Panel de notificaciones -->
+                <div id="notificationPanel" class="notification-panel">
+                    <div class="notification-panel-header">
+                        <h3>Notificaciones</h3>
+                        <button onclick="closeNotificationPanel()">&times;</button>
                     </div>
-                    <div className="flex-grow">
-                        <h4 className="text-white font-bold tracking-tight uppercase group-hover:text-cyan-400 transition-colors leading-tight">{cert.title}</h4>
-                        <div className="flex items-center gap-3 mt-1">
-                            <span className="text-[10px] font-mono text-slate-500 uppercase">{cert.org}</span>
-                            <span className="w-1 h-1 rounded-full bg-white/10" />
-                            <span className="text-[10px] font-mono text-cyan-600 font-bold">{cert.year}</span>
+                    <div id="notificationList" class="notification-list"></div>
+                </div>
+            </header>
+
+            <!-- Contenedor de todas las secciones -->
+            <div class="sections-container">
+                <!-- Dashboard -->
+                <section id="dashboard" class="content-section active">
+                    <div class="dashboard-header">
+                        <h2><i class="fas fa-tachometer-alt"></i> Dashboard – Hotel</h2>
+                        <div class="dashboard-stats">
+                            <div class="stat-card">
+                                <i class="fas fa-dollar-sign"></i>
+                                <div>
+                                    <h3>Ventas Hoy</h3>
+                                    <p class="stat-value">$0.00</p>
+                                    <small class="stat-change" id="ventasChange">+0% vs ayer</small>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <i class="fas fa-bed"></i>
+                                <div>
+                                    <h3>Habitaciones Ocupadas</h3>
+                                    <p class="stat-value">0/26</p>
+                                    <small class="stat-change" id="occupancyChange">Ocupación normal</small>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <i class="fas fa-box"></i>
+                                <div>
+                                    <h3>Productos Bajo Stock</h3>
+                                    <p class="stat-value">0</p>
+                                    <small class="stat-change" id="stockChange">Todos OK</small>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <i class="fas fa-users"></i>
+                                <div>
+                                    <h3>Reservas Próximas</h3>
+                                    <p class="stat-value">0</p>
+                                    <small class="stat-change">Próximos 7 días</small>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <ChevronRight className="text-slate-700 group-hover:text-cyan-500 transform group-hover:translate-x-1 transition-all" />
-                  </div>
-                ))}
-              </div>
+
+                    <!-- BOTONES DE ACCIÓN PRINCIPALES (Solo 3) -->
+                    <div class="actions">
+                        <button class="dashboard-action" onclick="console.log('Click en Registrar venta'); mostrarSeccion('venta-form')">
+                            <i class="fas fa-cash-register"></i>
+                            Registrar venta
+                        </button>
+                        <button class="dashboard-action" onclick="console.log('Click en Agendar habitación'); mostrarSeccion('reserva-form')">
+                            <i class="fas fa-calendar-plus"></i>
+                            Agendar habitación
+                        </button>
+                        <button class="dashboard-action" onclick="console.log('Click en Ver habitaciones'); mostrarSeccion('habitaciones')">
+                            <i class="fas fa-bed"></i>
+                            Ver habitaciones
+                        </button>
+                    </div>
+
+                    <!-- VENTAS DEL DÍA -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-shopping-cart"></i> Ventas del día</h3>
+                            <button class="small-btn">Ver todas</button>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Hora</th>
+                                    <th>Producto</th>
+                                    <th>Cantidad</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tablaVentas">
+                                <tr><td colspan="4" class="loading">Cargando datos...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- HISTORIAL RECIENTE (Acordeón contraído) -->
+                    <div class="card">
+                        <button class="accordion-header" onclick="toggleAccordion(this)">
+                            <h3 style="margin: 0; display: flex; align-items: center; gap: 10px;">
+                                <i class="fas fa-history"></i> Historial reciente
+                            </h3>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="accordion-content">
+                            <div class="history-grid">
+                            <div>
+                                <h4>Reservas recientes</h4>
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Fecha</th>
+                                            <th>Hab.</th>
+                                            <th>Cliente</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="recentReservas">
+                                        <tr><td colspan="3" class="loading">Cargando...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div>
+                                <h4>Movimientos recientes</h4>
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Hora</th>
+                                            <th>Descripción</th>
+                                            <th>Monto</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="recentMovimientos">
+                                        <tr><td colspan="3" class="loading">Cargando...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ESTADO HABITACIONES -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-building"></i> Estado de habitaciones</h3>
+                            <button class="small-btn" onclick="mostrarSeccion('habitaciones')">Gestionar</button>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Habitación</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tablaHabitaciones">
+                                <tr><td colspan="2" class="loading">Cargando datos...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- STOCK BAJO -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-exclamation-triangle"></i> Productos con stock bajo</h3>
+                            <button class="small-btn" onclick="mostrarSeccion('inventario')">Ver todo</button>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Stock</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tablaStock">
+                                <tr><td colspan="2" class="loading">Cargando datos...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- MVP Principal -->
+                <section id="mvp" class="content-section">
+                    <div class="mvp-header">
+                        <h2><i class="fas fa-home"></i> Sistema Hotelero – MVP</h2>
+                        <p class="subtitle">Módulo principal de gestión</p>
+                    </div>
+
+                    <div class="mvp-nav">
+                        <button class="mvp-nav-btn active" onclick="mostrarMVPSection('habitaciones-mvp')">
+                            <i class="fas fa-bed"></i> Habitaciones
+                        </button>
+                        <button class="mvp-nav-btn" onclick="mostrarMVPSection('reservas-mvp')">
+                            <i class="fas fa-calendar-alt"></i> Reservas
+                        </button>
+                        <button class="mvp-nav-btn" onclick="mostrarMVPSection('tienda-mvp')">
+                            <i class="fas fa-store"></i> Tienda
+                        </button>
+                        <button class="mvp-nav-btn" onclick="mostrarMVPSection('ventas-mvp')">
+                            <i class="fas fa-cash-register"></i> Ventas
+                        </button>
+                    </div>
+
+                    <!-- HABITACIONES MVP -->
+                    <div id="habitaciones-mvp" class="mvp-section active">
+                        <h3><i class="fas fa-bed"></i> Registrar Habitación</h3>
+                        <form class="mvp-form" id="formHabitacion">
+                            <div class="form-group">
+                                <label for="habNumero">Número de habitación</label>
+                                <input type="number" id="habNumero" min="1" max="26" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="habTipo">Tipo</label>
+                                <select id="habTipo" required>
+                                    <option value="">Seleccione</option>
+                                    <option>Simple</option>
+                                    <option>Doble</option>
+                                    <option>Familiar</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="habPrecio">Precio por noche</label>
+                                <input type="number" id="habPrecio" required>
+                            </div>
+                            <button type="submit" class="submit-btn">
+                                <i class="fas fa-save"></i> Guardar Habitación
+                            </button>
+                            <div class="msg" id="msgHabitacion"></div>
+                        </form>
+                    </div>
+
+                    <!-- RESERVAS MVP -->
+                    <div id="reservas-mvp" class="mvp-section">
+                        <h3><i class="fas fa-calendar-alt"></i> Registrar Reserva</h3>
+                        <form class="mvp-form" id="formReserva">
+                            <div class="form-group">
+                                <label for="resCliente">Cliente</label>
+                                <input type="text" id="resCliente" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="resHabitacion">Habitación</label>
+                                <input type="number" id="resHabitacion" min="1" max="26" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="resEntrada">Fecha entrada</label>
+                                <input type="date" id="resEntrada" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="resSalida">Fecha salida</label>
+                                <input type="date" id="resSalida" required>
+                            </div>
+                            <button type="submit" class="submit-btn">
+                                <i class="fas fa-calendar-check"></i> Registrar Reserva
+                            </button>
+                            <div class="msg" id="msgReserva"></div>
+                        </form>
+                    </div>
+
+                    <!-- TIENDA MVP -->
+                    <div id="tienda-mvp" class="mvp-section">
+                        <h3><i class="fas fa-store"></i> Registrar Producto</h3>
+                        <form class="mvp-form" id="formProducto">
+                            <div class="form-group">
+                                <label for="prodNombre">Nombre del producto</label>
+                                <input type="text" id="prodNombre" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="prodPrecio">Precio</label>
+                                <input type="number" id="prodPrecio" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="prodCantidad">Cantidad en inventario</label>
+                                <input type="number" id="prodCantidad" required>
+                            </div>
+                            <button type="submit" class="submit-btn">
+                                <i class="fas fa-save"></i> Guardar Producto
+                            </button>
+                            <div class="msg" id="msgProducto"></div>
+                        </form>
+                    </div>
+
+                    <!-- VENTAS MVP -->
+                    <div id="ventas-mvp" class="mvp-section">
+                        <h3><i class="fas fa-cash-register"></i> Registrar Venta</h3>
+                        <form class="mvp-form" id="formVenta">
+                            <div class="form-group">
+                                <label for="ventaProducto">Producto</label>
+                                <input type="text" id="ventaProducto" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="ventaCantidad">Cantidad</label>
+                                <input type="number" id="ventaCantidad" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="ventaHabitacion">Habitación (opcional)</label>
+                                <input type="number" id="ventaHabitacion" min="1" max="26">
+                            </div>
+                            <button type="submit" class="submit-btn">
+                                <i class="fas fa-cash-register"></i> Registrar Venta
+                            </button>
+                            <div class="msg" id="msgVenta"></div>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- Habitaciones -->
+                <section id="habitaciones" class="content-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-bed"></i> Gestión de Habitaciones</h2>
+                        <button class="primary-btn" onclick="mostrarSeccion('reserva-form')">
+                            <i class="fas fa-plus"></i> Nueva Reserva
+                        </button>
+                    </div>
+                    
+                    <div class="card">
+                        <h3><i class="fas fa-building"></i> Estado de habitaciones</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Estado</th>
+                                    <th>Cambiar estado</th>
+                                    <th>Agendar</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tablaHabitacionesFull">
+                                <tr><td colspan="4" class="loading">Cargando habitaciones...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Inventario -->
+                <section id="inventario" class="content-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-boxes"></i> Inventario - Productos</h2>
+                        <button class="primary-btn" onclick="mostrarSeccion('producto-form')">
+                            <i class="fas fa-plus"></i> Agregar producto
+                        </button>
+                    </div>
+                    
+                    <div class="search-bar">
+                        <input type="text" id="filtroNombre" placeholder="Buscar producto..." onkeyup="filtrarProductos()">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    
+                    <div class="card">
+                        <h3><i class="fas fa-clipboard-list"></i> Lista de productos</h3>
+                        <div class="table-controls">
+                            <label><input type="checkbox" id="sortByPrice"> Ordenar por precio</label>
+                            <label>
+                                <select id="pageSize">
+                                    <option value="5">5 por página</option>
+                                    <option value="10" selected>10 por página</option>
+                                    <option value="20">20 por página</option>
+                                </select>
+                            </label>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Precio</th>
+                                    <th>Stock</th>
+                                    <th>Estado</th>
+                                    <th>Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tablaProductos">
+                                <tr><td colspan="5" class="loading">Cargando productos...</td></tr>
+                            </tbody>
+                        </table>
+                        <div id="productPagination" class="pagination"></div>
+                    </div>
+                </section>
+
+                <!-- Producto Form -->
+                <section id="producto-form" class="content-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-edit"></i> Producto - Formulario</h2>
+                        <button class="secondary-btn" onclick="mostrarSeccion('inventario')">
+                            <i class="fas fa-arrow-left"></i> Volver al inventario
+                        </button>
+                    </div>
+                    
+                    <div class="card form-card">
+                        <h3><i class="fas fa-box"></i> Registrar / Editar producto</h3>
+                        <form id="productoForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="nombre">Nombre <span class="required">*</span></label>
+                                    <input type="text" id="nombre" required>
+                                    <small class="help-text">Nombre descriptivo del producto</small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="categoria">Categoría <span class="required">*</span></label>
+                                    <select id="categoria" required>
+                                        <option value="">Seleccione</option>
+                                        <option>Bebidas</option>
+                                        <option>Snacks</option>
+                                        <option>Aseo</option>
+                                        <option>Otros</option>
+                                    </select>
+                                    <small class="help-text">Clasificación del producto</small>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="precio">Precio <span class="required">*</span></label>
+                                    <input type="number" id="precio" min="0" step="0.01" required>
+                                    <small class="help-text">Precio de venta al público</small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="stock">Stock inicial <span class="required">*</span></label>
+                                    <input type="number" id="stock" min="0" required>
+                                    <small class="help-text">Cantidad disponible</small>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="minimo">Stock mínimo <span class="required">*</span></label>
+                                    <input type="number" id="minimo" min="0" required>
+                                    <small class="help-text">Cantidad para alerta de stock bajo</small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="ubicacion">Ubicación <span class="required">*</span></label>
+                                    <input type="text" id="ubicacion" placeholder="Ej: Bodega, Recepción" required>
+                                    <small class="help-text">Dónde se almacena el producto</small>
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="submit-btn">
+                                    <i class="fas fa-save"></i> Guardar
+                                </button>
+                                <button type="button" class="cancel-btn" onclick="confirmCancel(event, 'inventario')">
+                                    <i class="fas fa-times"></i> Cancelar
+                                </button>
+                            </div>
+                            <div class="msg" id="msgProductoForm"></div>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- Venta Form -->
+                <section id="venta-form" class="content-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-cash-register"></i> Registrar Venta</h2>
+                        <button class="secondary-btn" onclick="mostrarSeccion('dashboard')">
+                            <i class="fas fa-arrow-left"></i> Volver al Dashboard
+                        </button>
+                    </div>
+                    
+                    <div class="card form-card">
+                        <h3><i class="fas fa-shopping-cart"></i> Nueva venta</h3>
+                        <form id="ventaForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                <label for="producto">Producto</label>
+                                <input list="productosList" id="ventaProductoSearch" placeholder="Buscar producto..." required autocomplete="off">
+                                <input type="hidden" id="ventaProductoId">
+                                <datalist id="productosList"></datalist>
+                                </div>
+                                <div class="form-group">
+                                    <label for="cantidad">Cantidad</label>
+                                    <input type="number" id="cantidad" min="1" value="1" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="tipo">Tipo</label>
+                                    <select id="tipo" required onchange="cambiarTipoVenta()">
+                                        <option value="">Seleccione</option>
+                                        <option value="TIENDA">Venta tienda</option>
+                                        <option value="HABITACION">Consumo habitación</option>
+                                    </select>
+                                </div>
+                                <div class="form-group" id="campoHabitacionContainer" style="display: none;">
+                                    <label for="habitacionVenta">Habitación</label>
+                                    <input type="number" id="habitacionVenta" min="1" max="26">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="pago">Método de pago</label>
+                                <select id="pago" required>
+                                    <option value="">Seleccione</option>
+                                    <option selected>Efectivo</option>
+                                    <option>Tarjeta</option>
+                                    <option>Transferencia</option>
+                                </select>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="submit-btn">
+                                    <i class="fas fa-check"></i> Registrar Venta
+                                </button>
+                                <button type="button" class="cancel-btn" onclick="confirmCancel(event, 'dashboard')">
+                                    <i class="fas fa-times"></i> Cancelar
+                                </button>
+                            </div>
+                            <div class="msg" id="msgVentaForm"></div>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- Reserva Form -->
+                <section id="reserva-form" class="content-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-calendar-check"></i> Reserva de Habitación</h2>
+                        <button class="secondary-btn" onclick="mostrarSeccion('habitaciones')">
+                            <i class="fas fa-arrow-left"></i> Volver a Habitaciones
+                        </button>
+                    </div>
+                    
+                    <div class="card form-card">
+                        <h3><i class="fas fa-calendar-plus"></i> Agendar reserva</h3>
+                        <form id="reservaForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="habitacionReserva">Habitación</label>
+                                    <input type="number" id="habitacionReserva" min="1" max="26" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="clienteReserva">Nombre del cliente</label>
+                                    <input type="text" id="clienteReserva" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="inicioReserva">Fecha inicio</label>
+                                    <input type="date" id="inicioReserva" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="finReserva">Fecha fin</label>
+                                    <input type="date" id="finReserva" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="obsReserva">Observaciones</label>
+                                <textarea id="obsReserva" rows="3"></textarea>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="submit-btn">
+                                    <i class="fas fa-calendar-check"></i> Guardar Reserva
+                                </button>
+                                <button type="button" class="cancel-btn" onclick="confirmCancel(event, 'habitaciones')">
+                                    <i class="fas fa-times"></i> Cancelar
+                                </button>
+                            </div>
+                            <div class="msg" id="msgReservaForm"></div>
+                        </form>
+                    </div>
+                </section>
             </div>
-          </div>
-        </section>
-
-        {/* --- CTA FINAL --- */}
-        <section className="py-32">
-          <div className="relative bg-[#0a0f1d] border border-white/5 rounded-[3rem] p-16 md:p-24 text-center overflow-hidden shadow-2xl">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(6,182,212,0.08),transparent_70%)]" />
-            <div className="absolute -top-24 -left-24 w-64 h-64 bg-cyan-500/10 blur-[100px] rounded-full" />
-            
-            <div className="relative z-10 space-y-10">
-              <div className="space-y-6">
-                <h2 className="text-4xl md:text-6xl font-black text-white tracking-tighter uppercase leading-[0.9]">
-                  Iniciemos el <span className="text-cyan-400">Despliegue.</span>
-                </h2>
-                <p className="text-slate-400 max-w-xl mx-auto font-light text-lg">
-                  ¿Buscas un perfil con compromiso, bases sólidas en seguridad y capacidad de adaptación? Hablemos de cómo puedo sumar a tu equipo.
-                </p>
-              </div>
-              <div className="flex flex-col sm:flex-row justify-center items-center gap-6">
-                <a 
-                  href="mailto:ibarragomezangelgabriel@gmail.com" 
-                  className="w-full sm:w-auto px-12 py-5 bg-white text-black font-black text-xs uppercase rounded-2xl hover:bg-cyan-400 transition-all hover:scale-105"
-                >
-                  Contáctame ahora
-                </a>
-                <a 
-                  href="https://linkedin.com" 
-                  target="_blank" 
-                  className="w-full sm:w-auto px-12 py-5 bg-white/5 border border-white/10 text-white font-black text-xs uppercase rounded-2xl hover:bg-white/10 transition-all flex items-center justify-center gap-3"
-                >
-                  <Linkedin size={18} /> Ver LinkedIn
-                </a>
-              </div>
-            </div>
-          </div>
-        </section>
-      </main>
-
-      {/* --- FOOTER --- */}
-      <footer className="py-20 border-t border-white/5 bg-black/40 text-center relative z-10">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
-          <div className="flex flex-col items-center md:items-start gap-2">
-            <p className="text-[10px] font-mono text-slate-500 uppercase tracking-[0.3em]">
-              © 2025 ANGEL GABRIEL IBARRA GOMEZ
-            </p>
-            <p className="text-[9px] font-mono text-cyan-900 uppercase tracking-[0.2em]">
-              Sistemas Seguros // Cúcuta, CO
-            </p>
-          </div>
-          <div className="flex gap-4">
-            {[
-                { icon: <Mail size={20}/>, href: "mailto:ibarragomezangelgabriel@gmail.com" },
-                { icon: <Linkedin size={20}/>, href: "https://linkedin.com" },
-                { icon: <Github size={20}/>, href: "https://github.com" }
-            ].map((social, i) => (
-                <a key={i} href={social.href} className="p-4 bg-white/[0.02] border border-white/5 rounded-2xl hover:border-cyan-500/40 hover:text-cyan-400 transition-all">
-                    {social.icon}
-                </a>
-            ))}
-          </div>
-        </div>
-      </footer>
-
-      <style dangerouslySetInnerHTML={{ __html: `
-        html { scroll-behavior: smooth; }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #020617; }
-        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #06b6d4; }
-        
-        @keyframes float {
-          0% { transform: translateY(0px); }
-          50% { transform: translateY(-10px); }
-          100% { transform: translateY(0px); }
-        }
-        .animate-float { animation: float 6s ease-in-out infinite; }
-      `}} />
+        </main>
     </div>
-  );
-};
 
-export default App;
-
+    <script src="script.js"></script>
+</body>
+</html>
