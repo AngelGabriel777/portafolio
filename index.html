@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Angel Gabriel Ibarra - Security Analyst</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/lucide-static@0.263.0/font/lucide.css"
+    />
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    <meta name="description" content="Angel Gabriel Ibarra - Security Analyst especializado en ciberseguridad, redes y hardening de sistemas. Certificado (ISC)² CC.">
+    <meta name="keywords" content="ciberseguridad, seguridad informática, pentesting, redes, Linux, Security Analyst">
+  </head>
+  <body>
+    <!-- Cyber Background -->
+    <div id="cyber-bg" class="cyber-bg">
+      <div class="cyber-grid"></div>
+      <div class="cyber-glow"></div>
+    </div>
+
+    <!-- Navegación -->
+    <nav id="main-nav" class="main-nav">
+      <div class="nav-container">
+        <div class="logo">
+          <div class="logo-icon">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="icon-fingerprint"
+            >
+              <path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4" />
+              <path d="M14 13.12c0 2.38 0 6.38-1 8.88" />
+              <path d="M17.29 21.02c.12-.6.43-2.3.5-3.02" />
+              <path d="M2 12a10 10 0 0 1 18-6" />
+              <path d="M2 16h.01" />
+              <path d="M21.8 16c.2-2 .131-5.354 0-6" />
+              <path d="M5 19.5C5.5 18 6 15 6 12a6 6 0 0 1 .34-2" />
+              <path d="M8.65 22c.21-.66.45-1.32.57-2" />
+              <path d="M9 6.8a6 6 0 0 1 9 5.2v2" />
+            </svg>
+          </div>
+          <div class="logo-text">
+            <span class="logo-name">ANGEL GABRIEL IBARRA</span>
+            <span class="logo-title">Security Analyst</span>
+          </div>
+        </div>
+
+        <div class="nav-links">
+          <a href="#inicio" class="nav-link active" data-section="inicio">Inicio</a>
+          <a href="#perfil" class="nav-link" data-section="perfil">Perfil</a>
+          <a href="#proyectos" class="nav-link" data-section="proyectos">Proyectos</a>
+          <a href="#educacion" class="nav-link" data-section="educacion">Educación</a>
+          <a href="#certificaciones" class="nav-link" data-section="certificaciones">Certificaciones</a>
+          <div class="nav-social">
+            <a href="https://linkedin.com/in/tu-perfil" target="_blank" class="social-icon" aria-label="LinkedIn">
+              <span class="icon-brand icon-linkedin"></span>
+            </a>
+            <a href="mailto:ibarragomezangelgabriel@gmail.com" class="social-icon" aria-label="Email">
+              <i data-lucide="mail"></i>
+            </a>
+          </div>
+        </div>
+
+        <button id="mobile-menu-btn" class="mobile-menu-btn" aria-label="Abrir menú">
+          <i data-lucide="menu"></i>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Menú Móvil -->
+    <div id="mobile-menu" class="mobile-menu">
+      <div class="mobile-menu-header">
+        <div class="mobile-logo">
+          <i data-lucide="fingerprint"></i>
+        </div>
+        <button id="close-menu-btn" class="close-menu-btn" aria-label="Cerrar menú">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <div class="mobile-links">
+        <a href="#inicio" class="mobile-link" data-section="inicio">
+          <span>Inicio</span>
+          <i data-lucide="chevron-right"></i>
+        </a>
+        <a href="#perfil" class="mobile-link" data-section="perfil">
+          <span>Perfil</span>
+          <i data-lucide="chevron-right"></i>
+        </a>
+        <a href="#proyectos" class="mobile-link" data-section="proyectos">
+          <span>Proyectos</span>
+          <i data-lucide="chevron-right"></i>
+        </a>
+        <a href="#educacion" class="mobile-link" data-section="educacion">
+          <span>Educación</span>
+          <i data-lucide="chevron-right"></i>
+        </a>
+        <a href="#certificaciones" class="mobile-link" data-section="certificaciones">
+          <span>Certificaciones</span>
+          <i data-lucide="chevron-right"></i>
+        </a>
+      </div>
+      <div class="mobile-social">
+        <a href="mailto:ibarragomezangelgabriel@gmail.com" class="mobile-social-btn" aria-label="Email">
+          <i data-lucide="mail"></i>
+        </a>
+        <a href="https://wa.me/573001234567" target="_blank" class="mobile-social-btn" aria-label="WhatsApp">
+          <span class="icon-brand icon-whatsapp"></span>
+        </a>
+        <a href="https://linkedin.com/in/tu-perfil" target="_blank" class="mobile-social-btn" aria-label="LinkedIn">
+          <span class="icon-brand icon-linkedin"></span>
+        </a>
+      </div>
+    </div>
+
+    <main class="main-content">
+      <!-- Sección Hero -->
+      <section id="inicio" class="section section-hero">
+        <div class="hero-content">
+          <div class="hero-left">
+            <div class="availability-badge">
+              <span class="pulse-dot"></span>
+              <span>Available for Junior Roles</span>
+            </div>
+
+            <div class="hero-title">
+              <h1>ANGEL <br /><span class="gradient-text">GABRIEL.</span></h1>
+              <p class="hero-subtitle">
+                Especializado en <span>ciberseguridad y redes</span>.
+                Certificado <span class="text-cyan">(ISC)² CC</span>. Enfocado
+                en la resiliencia de infraestructuras críticas y hardening de
+                sistemas.
+              </p>
+            </div>
+
+            <div class="hero-actions">
+              <button class="btn-primary" id="download-cv-btn">
+                <i data-lucide="download"></i>
+                Descargar CV
+              </button>
+              <div class="language-badge">
+                <span class="language-level">B1</span>
+                <div class="divider"></div>
+                <div class="language-info">
+                  <span>English</span>
+                  <span>Technical</span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Botones de contacto rápido en Hero -->
+            <div class="quick-contact">
+              <a href="https://wa.me/573001234567" target="_blank" class="quick-btn whatsapp" aria-label="WhatsApp">
+                <span class="icon-brand icon-whatsapp"></span> WhatsApp
+              </a>
+              <a href="tel:+573001234567" class="quick-btn phone" aria-label="Llamar">
+                <i data-lucide="phone"></i> Llamar
+              </a>
+            </div>
+          </div>
+
+          <div class="hero-right">
+            <div class="terminal-card">
+              <div class="terminal-header">
+                <div class="terminal-dots">
+                  <span class="dot red"></span>
+                  <span class="dot yellow"></span>
+                  <span class="dot green"></span>
+                </div>
+                <div class="terminal-title">
+                  <i data-lucide="terminal"></i>
+                  <span>stack_v2.0.sh</span>
+                </div>
+              </div>
+              <div class="terminal-body">
+                <div class="skills-container" id="skills-container">
+                  <!-- Las skills se cargan con JS -->
+                </div>
+                <div class="skills-grid">
+                  <div class="skill-card">
+                    <i data-lucide="cpu"></i>
+                    <p class="skill-category">Tools</p>
+                    <p class="skill-items">NMAP, Wireshark, Kali</p>
+                  </div>
+                  <div class="skill-card">
+                    <i data-lucide="database"></i>
+                    <p class="skill-category">Cloud</p>
+                    <p class="skill-items">Supabase, n8n, API</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Sección Perfil -->
+      <section id="perfil" class="section section-profile">
+        <div class="section-container">
+          <div class="section-header">
+            <div class="title-icon">
+              <i data-lucide="user-check"></i>
+            </div>
+            <h2 class="section-title">Perfil</h2>
+            <p class="section-subtitle">Sobre mi trayectoria</p>
+          </div>
+          <div class="profile-content">
+            <div class="profile-card">
+              <p class="profile-text">
+                Como estudiante de
+                <span>9º semestre de Ingeniería de Sistemas</span>, he orientado
+                mi carrera hacia la protección de activos digitales. Poseo un
+                dominio sólido en entornos <span class="text-cyan">Linux</span>,
+                administración de redes seguras y automatización de procesos
+                mediante IA. Mi enfoque combina la
+                <span>rigurosidad técnica</span> con una mentalidad proactiva
+                frente a las amenazas emergentes.
+              </p>
+              <div class="profile-tags">
+                <span class="tag">Pensamiento Analítico</span>
+                <span class="tag">Ética Hacker</span>
+                <span class="tag">Resolución de Problemas</span>
+                <span class="tag">Adaptabilidad</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Sección Proyectos -->
+      <section id="proyectos" class="section section-projects">
+        <div class="section-header">
+          <div class="title-icon">
+            <i data-lucide="briefcase"></i>
+          </div>
+          <h2 class="section-title">Proyectos</h2>
+          <p class="section-subtitle">Experiencia técnica aplicada</p>
+        </div>
+        <div class="projects-grid" id="projects-grid">
+          <!-- Los proyectos se cargan con JS -->
+        </div>
+      </section>
+
+      <!-- Sección Educación y Certificaciones -->
+      <section id="educacion" class="section section-education">
+        <div class="education-container">
+          <div class="education-column">
+            <div class="section-header">
+              <div class="title-icon">
+                <i data-lucide="book-open"></i>
+              </div>
+              <h2 class="section-title">Educación</h2>
+            </div>
+            <div class="education-card">
+              <h3>Univ. Simón Bolívar</h3>
+              <p class="education-subtitle">Ingeniería de Sistemas</p>
+              <div class="education-details">
+                <div class="detail">
+                  <i data-lucide="activity"></i>
+                  <span>9º Semestre (2021 - Presente)</span>
+                </div>
+                <div class="detail">
+                  <i data-lucide="map-pin"></i>
+                  <span>Cúcuta, Colombia</span>
+                </div>
+              </div>
+              <div class="education-icon">
+                <i data-lucide="cpu"></i>
+              </div>
+            </div>
+          </div>
+
+          <div id="certificaciones" class="certifications-column">
+            <div class="section-header">
+              <div class="title-icon">
+                <i data-lucide="award"></i>
+              </div>
+              <h2 class="section-title">Validaciones</h2>
+            </div>
+            <div class="certifications-grid" id="certifications-grid">
+              <!-- Las certificaciones se cargan con JS -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA Final -->
+      <section class="section section-cta">
+        <div class="cta-card">
+          <div class="cta-content">
+            <h2>Iniciemos el <span class="text-cyan">Despliegue.</span></h2>
+            <p>
+              ¿Buscas un perfil con compromiso, bases sólidas en seguridad y
+              capacidad de adaptación? Hablemos de cómo puedo sumar a tu equipo.
+            </p>
+            
+            <!-- Botones de contacto directo y simple -->
+            <div class="cta-buttons">
+              <!-- Email directo -->
+              <a href="mailto:ibarragomezangelgabriel@gmail.com?subject=Contacto%20desde%20tu%20portafolio&body=Hola%20Gabriel,%0D%0A%0D%0AVi%20tu%20portafolio%20y%20me%20gustaría%20contactarte.%0D%0A%0D%0ASaludos." 
+                 class="btn-primary" aria-label="Enviar email">
+                <i data-lucide="mail"></i> Enviar email
+              </a>
+              
+              <!-- WhatsApp directo -->
+              <a href="https://wa.me/573001234567?text=Hola%20Gabriel,%20vi%20tu%20portafolio%20y%20me%20gustaría%20contactarte." 
+                 target="_blank" 
+                 class="btn-primary whatsapp-btn" aria-label="WhatsApp">
+                <span class="icon-brand icon-whatsapp"></span> WhatsApp
+              </a>
+              
+              <!-- Descargar CV directo -->
+              <a href="assets/cv/Angel_ibarra_CV_Ciberr.pdf" 
+                 download="Angel_Ibarra_CV_Ciberseguridad.pdf" 
+                 class="btn-secondary" 
+                 id="direct-cv-download"
+                 aria-label="Descargar CV">
+                <i data-lucide="download"></i> Descargar CV
+              </a>
+            </div>
+            
+            <!-- Enlaces a redes sociales -->
+            <div class="social-links">
+              <a href="https://linkedin.com/in/tu-perfil" target="_blank" class="social-link" aria-label="LinkedIn">
+                <span class="icon-brand icon-linkedin"></span> LinkedIn
+              </a>
+              <a href="https://github.com/tu-usuario" target="_blank" class="social-link" aria-label="GitHub">
+                <span class="icon-brand icon-github"></span> GitHub
+              </a>
+              <a href="https://t.me/tu-usuario-telegram" target="_blank" class="social-link" aria-label="Telegram">
+                <span class="icon-brand icon-telegram"></span> Telegram
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-container">
+        <div class="footer-info">
+          <p class="footer-copyright">© 2025 ANGEL GABRIEL IBARRA GOMEZ</p>
+          <p class="footer-location">Sistemas Seguros // Cúcuta, CO</p>
+          <p class="footer-contact">
+            <a href="mailto:ibarragomezangelgabriel@gmail.com">ibarragomezangelgabriel@gmail.com</a> | 
+            <a href="tel:+573108886235">+57 3108886235</a>
+          </p>
+        </div>
+        <div class="footer-social">
+          <a href="mailto:aibarragomezangelgabriel@gmail.com" class="social-btn" id="email-footer-btn" aria-label="Email">
+            <i data-lucide="mail"></i>
+          </a>
+          <a href="https://linkedin.com/in/tu-perfil" target="_blank" class="social-btn" id="linkedin-footer-btn" aria-label="LinkedIn">
+            <span class="icon-brand icon-linkedin"></span>
+          </a>
+          <a href="https://github.com/tu-usuario" target="_blank" class="social-btn" id="github-btn" aria-label="GitHub">
+            <span class="icon-brand icon-github"></span>
+          </a>
+          <a href="https://wa.me/573001234567" target="_blank" class="social-btn" id="whatsapp-btn" aria-label="WhatsApp">
+            <span class="icon-brand icon-whatsapp"></span>
+          </a>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Botón flotante de WhatsApp -->
+    <a href="https://wa.me/573001234567" class="whatsapp-float" target="_blank" aria-label="Chat en WhatsApp">
+      <span class="icon-brand icon-whatsapp"></span>
+    </a>
+
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="js/main.js"></script>
+  </body>
+</html>
