@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 🔐 Portfolio - Angel Gabriel Ibarra | Security Analyst
 
 Portfolio profesional optimizado con HTML, CSS y JavaScript vanilla. Diseñado con enfoque en rendimiento, accesibilidad y SEO.
@@ -224,3 +225,7 @@ Actualiza `font-family` en CSS.
 Este proyecto es de uso personal. Si deseas usar la estructura, por favor da crédito al autor original.
 
 **© 2025 Angel Gabriel Ibarra Gomez**
+=======
+# portafolio
+Mi portafolio web profesional.
+>>>>>>> d91aa75bea9ff2b3340c960c19daca219f845c67
